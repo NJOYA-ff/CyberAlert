@@ -1,5 +1,7 @@
 {
   "name": "CamDialect",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "react-vite"
 }

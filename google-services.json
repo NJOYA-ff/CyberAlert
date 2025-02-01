@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "692111278188",
+    "project_id": "camdialect",
+    "storage_bucket": "camdialect.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:692111278188:android:80296180e1dfac8ffdd849",
+        "android_client_info": {
+          "package_name": "Njoya.camdialect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "692111278188-q0bomfcrk4sfin7cfjca9fr8e33igp8f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSLHDbcGrMkUogMhimiElNu_jjIFCAUTA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "692111278188-q0bomfcrk4sfin7cfjca9fr8e33igp8f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
