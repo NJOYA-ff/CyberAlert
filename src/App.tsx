@@ -41,10 +41,12 @@ import "./theme/variables.css";
 import Longin from "./pages/Longin";
 import Home from "./pages/Home";
 import Conversation from "./pages/Conversation";
-import Speechtotext from "./pages/Speech-to-text";
 import Texttotext from "./pages/Text-to-text";
 import Mictomic from "./pages/Mic-to-mic";
 import Favorite from "./pages/Favorite";
+import SpeechtoTextPage from "./pages/Speech-to-text";
+import History from "./pages/History";
+import CamDialectAI from "./pages/CamDialectAI";
 
 setupIonicReact();
 const App: React.FC = () => {
@@ -63,7 +65,7 @@ const App: React.FC = () => {
             <Route
               path="/Speech-to-text"
               exact={true}
-              render={() => <Speechtotext />}
+              render={() => <SpeechtoTextPage />}
             />
             <Route
               path="/Mic-to-mic"
@@ -76,7 +78,12 @@ const App: React.FC = () => {
               render={() => <Texttotext />}
             />
             <Route path="/Favorite" exact={true} render={() => <Favorite />} />
-
+            <Route path="/History" exact={true} render={() => <History />} />
+            <Route
+              path={"/CamDialectAI"}
+              exact={true}
+              render={() => <CamDialectAI />}
+            />
             {/* <Route path="/folder/:name" exact={true}>
               <Page />
             </Route> */}

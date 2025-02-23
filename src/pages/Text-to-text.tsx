@@ -6,7 +6,6 @@ import {
   IonGrid,
   IonHeader,
   IonIcon,
-  IonImg,
   IonInput,
   IonItem,
   IonLabel,
@@ -15,15 +14,20 @@ import {
   IonSelectOption,
   IonTitle,
   IonToolbar,
+  useIonToast,
 } from "@ionic/react";
+import { Clipboard } from "@capacitor/clipboard";
 import {
-  star,
   swapHorizontal,
-  peopleOutline,
-  micOutline,
-  cameraOutline,
+  volumeHighOutline,
+  copyOutline,
+  checkmarkCircle,
+  square,
+  handLeft,
 } from "ionicons/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { TextToSpeech } from "@capacitor-community/text-to-speech";
+import { translateText } from "../components/TranslationEngine";
 const languages = [
   "English",
   "French",
@@ -41,10 +45,119 @@ const languages = [
 const Texttotext: React.FC = () => {
   const [firstLanguage, setFirstLanguage] = useState("English");
   const [secondLanguage, setSecondLanguage] = useState("French");
+  const [text, setText] = useState("");
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isSpeaking1, setIsSpeaking1] = useState(false);
+  const [transcripts, setTranscripts] = useState("");
+  const [presentToast] = useIonToast();
+  const handleSpeak = async () => {
+    if (isSpeaking) {
+      await TextToSpeech.stop();
+      setIsSpeaking(false);
+      return;
+    }
+    if (!transcripts.trim()) {
+      alert("please enter some text to speak");
+      return;
+    }
+    try {
+      setIsSpeaking(true);
+      await TextToSpeech.speak({
+        text: transcripts,
+        lang: "en-US",
+        rate: 1.0,
+        pitch: 1.0,
+      });
+    } catch (e: any) {
+      console.error("Error during Speech:", e);
+    } finally {
+      setIsSpeaking(false);
+    }
+  };
+  const handleSpeak1 = async () => {
+    if (isSpeaking1) {
+      await TextToSpeech.stop();
+      setIsSpeaking1(false);
+      return;
+    }
+    if (!text.trim()) {
+      alert("please enter some text to speak");
+      return;
+    }
+    try {
+      setIsSpeaking1(true);
+      await TextToSpeech.speak({
+        text: text,
+        lang: "en-US",
+        rate: 1.0,
+        pitch: 1.0,
+      });
+    } catch (e: any) {
+      console.error("Error during Speech:", e);
+    } finally {
+      setIsSpeaking1(false);
+    }
+  };
+  const handleCopytext = async () => {
+    try {
+      await Clipboard.write({
+        string: transcripts,
+      });
+      presentToast({
+        message: "Text copied",
+        position: "middle",
+        duration: 100,
+        color: "light",
+        cssClass: "custom-toast",
+        icon: checkmarkCircle,
+      });
+    } catch {
+      presentToast({
+        message: "error copying text",
+        position: "middle",
+        duration: 100,
+        color: "light",
+        cssClass: "custom-toast-error",
+      });
+    }
+  };
+  const handleCopytext1 = async () => {
+    try {
+      await Clipboard.write({
+        string: text,
+      });
+      presentToast({
+        message: "Text copied",
+        position: "middle",
+        duration: 100,
+        color: "light",
+        cssClass: "custom-toast",
+        icon: checkmarkCircle,
+      });
+    } catch {
+      presentToast({
+        message: "error copying text",
+        position: "middle",
+        duration: 100,
+        color: "light",
+        cssClass: "custom-toast-error",
+      });
+    }
+  };
+  useEffect(() => {
+    const handleTranslate = () => {
+      const translation = translateText(transcripts);
+      setText(translation);
+      console.log(translation);
+    };
+    handleTranslate();
+  }, [transcripts]);
+
   const handleswitch = () => {
     setFirstLanguage(secondLanguage);
     setSecondLanguage(firstLanguage);
   };
+
   return (
     <IonPage>
       <IonHeader class="ion-no-border">
@@ -64,14 +177,69 @@ const Texttotext: React.FC = () => {
             lines="none"
             style={{ marginTop: "1em", fontSize: "2em" }}
           >
-            <IonInput color={"light"} placeholder="Enter text"></IonInput>
+            <IonInput
+              color={"light"}
+              value={transcripts}
+              placeholder="Enter text"
+              onIonChange={(e: CustomEvent) => setTranscripts(e.detail.value!)}
+            ></IonInput>
+          </IonItem>
+          <IonItem color={"light"} lines="none">
+            {!isSpeaking && (
+              <IonIcon
+                onClick={handleSpeak}
+                icon={volumeHighOutline}
+                slot="start"
+                color="medium"
+              />
+            )}
+            {isSpeaking && (
+              <IonIcon
+                onClick={handleSpeak}
+                icon={square}
+                slot="start"
+                color="medium"
+              />
+            )}
+
+            <IonIcon
+              icon={copyOutline}
+              slot="end"
+              color="medium"
+              onClick={handleCopytext}
+            />
           </IonItem>
           <IonItem
             color={"light"}
             lines="none"
             style={{ marginTop: "1em", fontSize: "2em" }}
           >
-            <IonInput color={"light"}></IonInput>
+            <IonInput value={text} readonly color={"light"}></IonInput>
+          </IonItem>
+          <IonItem color={"light"}>
+            {!isSpeaking1 && (
+              <IonIcon
+                onClick={handleSpeak1}
+                icon={volumeHighOutline}
+                slot="start"
+                color="medium"
+              />
+            )}
+            {isSpeaking1 && (
+              <IonIcon
+                onClick={handleSpeak}
+                icon={square}
+                slot="start"
+                color="medium"
+              />
+            )}
+
+            <IonIcon
+              icon={copyOutline}
+              slot="end"
+              color="medium"
+              onClick={handleCopytext1}
+            />
           </IonItem>
         </IonCard>
         <IonGrid className="select-button-container">
