@@ -132,190 +132,221 @@ const Resources: React.FC = () => {
   };
   return (
     <IonPage>
-      <IonPage id="main-content">
-        {" "}
-        <IonHeader class="ion-no-border">
-          <IonToolbar>
-            <Link to={"/"} slot="start">
-              {" "}
-              <IonImg
-                src={logo}
-                style={{ height: "50px", width: "50px", marginLeft: "30px" }}
-                slot="start"
-              />
-            </Link>
-            <IonGrid className="menu">
-              {" "}
-              <IonButtons
-                style={{
-                  textTransform: "none",
-                  gap: "10px",
-                }}
-              >
-                <IonButton routerLink="/">Home</IonButton>
-                <IonButton routerLink="/Report-status">Report Status</IonButton>
-                <IonButton routerLink="/File-a-complaint">
-                  File a Complaint
-                </IonButton>
-                <IonButton routerLink="/Forum">Forum</IonButton>
-                <IonButton routerLink="/Resources">Resources</IonButton>
-              </IonButtons>
-              <IonButton fill="outline">Sing in</IonButton>
-            </IonGrid>{" "}
-            <IonButtons slot="end" className="menubt">
-              <IonMenuButton />{" "}
-            </IonButtons>
-          </IonToolbar>
-          <IonToolbar>
-            <IonTitle>Resources</IonTitle>
-          </IonToolbar>
-
-          <IonToolbar>
-            <IonSearchbar
-              value={searchText}
-              onIonChange={(e) => setSearchText(e.detail.value!)}
-              placeholder="Search resources..."
+      {" "}
+      <IonHeader class="ion-no-border">
+        <IonToolbar>
+          <Link to={"/"} slot="start">
+            {" "}
+            <IonImg
+              src={logo}
+              style={{ height: "50px", width: "50px", marginLeft: "30px" }}
+              slot="start"
             />
-          </IonToolbar>
-
-          <IonToolbar>
-            <IonSegment
-              value={selectedCategory}
-              onIonChange={(e) => setSelectedCategory(e.detail.value as string)}
-              scrollable
+          </Link>
+          <IonGrid className="menu">
+            {" "}
+            <IonButtons
+              style={{
+                textTransform: "none",
+                gap: "10px",
+              }}
             >
-              {categories.map((category) => (
-                <IonSegmentButton key={category} value={category}>
-                  <IonLabel>{getCategoryTitle(category)}</IonLabel>
-                </IonSegmentButton>
-              ))}
-            </IonSegment>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent className="resources-content">
-          {Object.keys(resourcesByCategory).length === 0 ? (
-            <div className="no-results">
-              <IonCard>
-                <IonCardContent>
-                  No resources found matching your criteria.
-                </IonCardContent>
-              </IonCard>
-            </div>
-          ) : (
-            Object.entries(resourcesByCategory).map(([category, items]) => (
-              <div key={category} className="resource-category">
-                <h2 className="category-title">{getCategoryTitle(category)}</h2>
-                <div className="resource-grid">
-                  {items.map((resource) => (
-                    <IonCard key={resource.id} className="resource-card">
-                      <IonCardHeader>
-                        <IonIcon
-                          icon={getIcon(resource.type)}
-                          color="primary"
-                          className="resource-icon"
-                        />
-                        <IonCardTitle>{resource.title}</IonCardTitle>
-                      </IonCardHeader>
-
-                      <IonCardContent>
-                        <p>{resource.description}</p>
-
-                        <div className="resource-meta">
-                          {resource.date && (
-                            <IonItem lines="none">
-                              <IonLabel>
-                                Date:{" "}
-                                {new Date(resource.date).toLocaleDateString()}
-                              </IonLabel>
-                            </IonItem>
-                          )}
-                          {resource.fileSize && (
-                            <IonItem lines="none">
-                              <IonLabel>Size: {resource.fileSize}</IonLabel>
-                            </IonItem>
-                          )}
-                        </div>
-
-                        <IonButton
-                          expand="block"
-                          href={resource.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="resource-button"
-                        >
-                          <IonIcon slot="start" icon={download} />
-                          {resource.type === "video" ? "Watch" : "Download"}
-                        </IonButton>
-                      </IonCardContent>
-                    </IonCard>
-                  ))}
-                </div>
-              </div>
-            ))
-          )}
-
-          <IonFooter style={{ bottom: "0", marginTop: "30em" }}>
-            <IonToolbar>
-              <IonGrid>
-                <IonRow>
-                  <IonCol>
-                    <strong>CyberAlert</strong>
-                    <br />
-                    <a href="/">Home Page</a>
-                    <br />
-                    <a href="#">Privacy Policy</a>
-                    <br />
-                    <a href="#">About CyberAlert</a>
-                  </IonCol>
-                  <IonCol>
-                    <strong>Cameroon Police</strong>
-                    <br />
-                    <a href="#">Home Page</a>
-                    <br />
-                    <a href="#">Privacy Policy</a>
-                    <br />
-                    <a href="#">About Cameroon</a>
-                  </IonCol>
-                  <IonCol>
-                    <strong>ANTIC</strong>
-                    <br />
-                    <a href="#">Home Page</a>
-                    <br />
-                    <a href="#">Privacy Policy</a>
-                    <br />
-                    <a href="#">About ANTIC</a>
-                  </IonCol>
-                  <IonCol>
-                    <strong>Contact the Press Office</strong>
-                    <br />
-                    (+237) 119
-                    <br />
-                    <a href="#">Accessibility Statement</a>
-                    <br />
-                    <a href="#">Questions? See the CyberAlert FAQ</a>
-                  </IonCol>
-                </IonRow>
-              </IonGrid>
-            </IonToolbar>{" "}
-            <IonToolbar
-              class="ion-no-border"
-              color={"secondary"}
-              style={{ paddingLeft: "20%", paddingRight: "20%" }}
-            >
-              <IonGrid
-                style={{ gap: "10px", fontSize: "22px", display: "flex" }}
+              <IonButton
+                routerLink="/"
+                className={location.pathname === "/" ? "active-button" : ""}
               >
-                {" "}
-                <IonIcon icon={logoYoutube} />
-                <IonIcon icon={logoFacebook} />
-                <IonIcon icon={logoLinkedin} />
-                <IonIcon icon={logoInstagram} />
-                <IonIcon icon={logoFlickr} />
-              </IonGrid>
-            </IonToolbar>
-          </IonFooter>
-        </IonContent>
-      </IonPage>
+                Home
+              </IonButton>
+              <IonButton
+                routerLink="/Report-status"
+                className={
+                  location.pathname === "/Report-status" ? "active-button" : ""
+                }
+              >
+                Report Status
+              </IonButton>
+              <IonButton
+                routerLink="/File-a-complaint"
+                className={
+                  location.pathname === "/File-a-complaint"
+                    ? "active-button"
+                    : ""
+                }
+              >
+                File a Complaint
+              </IonButton>
+              <IonButton
+                routerLink="/Forum"
+                className={
+                  location.pathname === "/Forum" ? "active-button" : ""
+                }
+              >
+                Forum
+              </IonButton>
+              <IonButton
+                routerLink="/Resources"
+                className={
+                  location.pathname === "/Resources" ? "active-button" : ""
+                }
+              >
+                Resources
+              </IonButton>
+            </IonButtons>
+            <IonButton fill="outline" routerLink="/SignIn">
+              Singin
+            </IonButton>
+          </IonGrid>{" "}
+          <IonButtons slot="end" className="menubt">
+            <IonMenuButton />{" "}
+          </IonButtons>
+        </IonToolbar>
+        <IonToolbar>
+          <IonTitle>Resources</IonTitle>
+        </IonToolbar>
+
+        <IonToolbar>
+          <IonSearchbar
+            value={searchText}
+            onIonChange={(e) => setSearchText(e.detail.value!)}
+            placeholder="Search resources..."
+          />
+        </IonToolbar>
+
+        <IonToolbar>
+          <IonSegment
+            value={selectedCategory}
+            onIonChange={(e) => setSelectedCategory(e.detail.value as string)}
+            scrollable
+          >
+            {categories.map((category) => (
+              <IonSegmentButton key={category} value={category}>
+                <IonLabel>{getCategoryTitle(category)}</IonLabel>
+              </IonSegmentButton>
+            ))}
+          </IonSegment>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className="resources-content">
+        {Object.keys(resourcesByCategory).length === 0 ? (
+          <div className="no-results">
+            <IonCard>
+              <IonCardContent>
+                No resources found matching your criteria.
+              </IonCardContent>
+            </IonCard>
+          </div>
+        ) : (
+          Object.entries(resourcesByCategory).map(([category, items]) => (
+            <div key={category} className="resource-category">
+              <h2 className="category-title">{getCategoryTitle(category)}</h2>
+              <div className="resource-grid">
+                {items.map((resource) => (
+                  <IonCard key={resource.id} className="resource-card">
+                    <IonCardHeader>
+                      <IonIcon
+                        icon={getIcon(resource.type)}
+                        color="primary"
+                        className="resource-icon"
+                      />
+                      <IonCardTitle>{resource.title}</IonCardTitle>
+                    </IonCardHeader>
+
+                    <IonCardContent>
+                      <p>{resource.description}</p>
+
+                      <div className="resource-meta">
+                        {resource.date && (
+                          <IonItem lines="none">
+                            <IonLabel>
+                              Date:{" "}
+                              {new Date(resource.date).toLocaleDateString()}
+                            </IonLabel>
+                          </IonItem>
+                        )}
+                        {resource.fileSize && (
+                          <IonItem lines="none">
+                            <IonLabel>Size: {resource.fileSize}</IonLabel>
+                          </IonItem>
+                        )}
+                      </div>
+
+                      <IonButton
+                        expand="block"
+                        href={resource.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="resource-button"
+                      >
+                        <IonIcon slot="start" icon={download} />
+                        {resource.type === "video" ? "Watch" : "Download"}
+                      </IonButton>
+                    </IonCardContent>
+                  </IonCard>
+                ))}
+              </div>
+            </div>
+          ))
+        )}
+
+        <IonFooter style={{ bottom: "0", marginTop: "30em" }}>
+          <IonToolbar>
+            <IonGrid>
+              <IonRow>
+                <IonCol>
+                  <strong>CyberAlert</strong>
+                  <br />
+                  <a href="/">Home Page</a>
+                  <br />
+                  <a href="#">Privacy Policy</a>
+                  <br />
+                  <a href="#">About CyberAlert</a>
+                </IonCol>
+                <IonCol>
+                  <strong>Cameroon Police</strong>
+                  <br />
+                  <a href="#">Home Page</a>
+                  <br />
+                  <a href="#">Privacy Policy</a>
+                  <br />
+                  <a href="#">About Cameroon</a>
+                </IonCol>
+                <IonCol>
+                  <strong>ANTIC</strong>
+                  <br />
+                  <a href="#">Home Page</a>
+                  <br />
+                  <a href="#">Privacy Policy</a>
+                  <br />
+                  <a href="#">About ANTIC</a>
+                </IonCol>
+                <IonCol>
+                  <strong>Contact the Press Office</strong>
+                  <br />
+                  (+237) 119
+                  <br />
+                  <a href="#">Accessibility Statement</a>
+                  <br />
+                  <a href="#">Questions? See the CyberAlert FAQ</a>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+          </IonToolbar>{" "}
+          <IonToolbar
+            class="ion-no-border"
+            color={"secondary"}
+            style={{ paddingLeft: "20%", paddingRight: "20%" }}
+          >
+            <IonGrid style={{ gap: "10px", fontSize: "22px", display: "flex" }}>
+              {" "}
+              <IonIcon icon={logoYoutube} />
+              <IonIcon icon={logoFacebook} />
+              <IonIcon icon={logoLinkedin} />
+              <IonIcon icon={logoInstagram} />
+              <IonIcon icon={logoFlickr} />
+            </IonGrid>
+          </IonToolbar>
+        </IonFooter>
+      </IonContent>
     </IonPage>
   );
 };

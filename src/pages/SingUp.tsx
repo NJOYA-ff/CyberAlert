@@ -1,9 +1,4 @@
 import {
-  getAuth,
-  sendPasswordResetEmail,
-  signInWithEmailAndPassword,
-} from "@firebase/auth";
-import {
   IonButton,
   IonButtons,
   IonCard,
@@ -18,41 +13,39 @@ import {
   IonItem,
   IonLabel,
   IonMenuButton,
-  IonNote,
   IonPage,
-  IonText,
   IonTitle,
   IonToolbar,
   useIonToast,
 } from "@ionic/react";
-import "../pages/Pages.scss";
+import React, { useEffect, useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+import logo from "../images/logo.png";
 import {
-  logIn,
+  personCircle,
+  personOutline,
   mailOutline,
   lockClosedOutline,
   checkmarkCircle,
 } from "ionicons/icons";
-import React, { useEffect, useState } from "react";
-import { Link, useHistory } from "react-router-dom";
-import { auth } from "../firebaseConfig";
-import logo from "../images/logo.png";
-const SignIn: React.FC = () => {
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import "../pages/Pages.scss";
+import { storage } from "../firebaseConfig";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+const SingUp: React.FC = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email1, setEmail1] = useState("");
-  const [email2, setEmail2] = useState("");
   const [password1, setPassword1] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
-  const [showSingup, setShowSingup] = useState(false);
-  const [showLogin, setShowLogin] = useState(true);
-  const [showButtons, setShowButtons] = useState(true);
+  const [showSingup, setShowSingup] = useState(true);
   const [showSingupupbt, setShowSingupupbt] = useState(true);
   const [showSingupupbt1, setShowSingupupbt1] = useState(true);
-  const [showResetPassword, setShowResetPassword] = useState(false);
-  const [message, setMassage] = useState("");
-  const [color, setColor] = useState("");
-
   const [presentToast] = useIonToast();
   useEffect(() => {
     const isanyempty = email.trim() === "" || password.trim() === "";
@@ -64,26 +57,6 @@ const SignIn: React.FC = () => {
     setShowSingupupbt1(isanyempty);
   }, [email1, password1, name]);
 
-  const handleShowResetPassword = () => {
-    setShowLogin(false);
-    setShowResetPassword(true);
-  };
-  const handleCancelResetPassword = () => {
-    setShowLogin(true);
-    setShowResetPassword(false);
-    setMassage("");
-    setEmail2("");
-  };
-  const handleResetPassword = async () => {
-    try {
-      await sendPasswordResetEmail(auth, email2);
-      setMassage("Password reset email sent. Please check your inbox");
-      setColor("success");
-    } catch {
-      setMassage("Error sending password reset email. Please try again.");
-      setColor("danger");
-    }
-  };
   // useEffect(() => {
   //   const auth = getAuth();
   //   onAuthStateChanged(auth, (user) => {
@@ -98,38 +71,49 @@ const SignIn: React.FC = () => {
   // }, []);
 
   const history = useHistory();
-
-  const handleLogin = async () => {
+  const handleSignup = async () => {
     try {
       const auth = getAuth();
-      const userCredential = await signInWithEmailAndPassword(
+      const usercreateCredential = await createUserWithEmailAndPassword(
         auth,
-        email,
-        password
+        email1,
+        password1
       );
+      const user = usercreateCredential.user;
+      await updateProfile(user, {
+        displayName: name,
+      });
+      if (photo && user) {
+        const storageRef = ref(storage, `profilePhotos/${user.uid}`);
+        await uploadBytes(storageRef, photo);
+        const photoURL = await getDownloadURL(storageRef);
+        await updateProfile(user, { photoURL });
+      }
       presentToast({
-        message: "logged in successfully",
+        message: "Registered successfully",
         position: "middle",
         duration: 1000,
         color: "light",
         cssClass: "custom-toast1",
         icon: checkmarkCircle,
       });
-      console.log("User logged in successfully:", userCredential);
-      setEmail("");
-      setPassword("");
-      history.push("/");
+      console.log("User registered successfully", usercreateCredential);
+      setEmail1("");
+      setPassword1("");
+      setName("");
     } catch (error) {
       presentToast({
-        message: "Error logging in ",
+        message: "Error registering user",
         position: "middle",
         duration: 1000,
         color: "light",
         cssClass: "custom-toast-error1",
       });
-      console.error("Error logging in user:", error);
+      console.error("Error registering user:", error);
     }
   };
+  {
+  }
 
   return (
     <IonPage>
@@ -203,8 +187,10 @@ const SignIn: React.FC = () => {
       </IonHeader>
       <IonContent>
         <IonGrid id="back1">
-          {showLogin && (
-            <IonCard className="Logincard">
+          {" "}
+          {showSingup && (
+            <IonCard className="Singupcard">
+              {" "}
               <IonCardHeader
                 style={{
                   textAlign: "center",
@@ -213,130 +199,82 @@ const SignIn: React.FC = () => {
                 }}
               >
                 <IonIcon
-                  icon={logIn}
-                  color="primary"
+                  icon={personCircle}
+                  color="tertiary"
                   style={{ fontSize: "44px" }}
                 />{" "}
                 <br />
-                <IonTitle color={"primary"} style={{ fontWeight: "bold" }}>
-                  SignIn
+                <IonTitle color={"tertiary"} style={{ fontWeight: "bold" }}>
+                  SingUp
                 </IonTitle>{" "}
               </IonCardHeader>
               <IonCardContent>
                 <IonItem>
-                  <IonIcon icon={mailOutline} color="primary" slot="end" />
+                  <IonIcon icon={personOutline} color="tertiary" slot="end" />
+                  <IonInput
+                    label="Name"
+                    labelPlacement="floating"
+                    color={"tertiary"}
+                    value={name}
+                    onIonChange={(e: CustomEvent) => setName(e.detail.value!)}
+                    style={{ marginLeft: "10px" }}
+                  ></IonInput>
+                </IonItem>
+                <br />
+                <IonItem>
+                  <IonIcon icon={mailOutline} color="tertiary" slot="end" />
                   <IonInput
                     label="Email"
                     labelPlacement="floating"
-                    color={"primary"}
-                    value={email}
-                    onIonChange={(e: CustomEvent) => setEmail(e.detail.value!)}
+                    color={"tertiary"}
+                    value={email1}
+                    onIonChange={(e: CustomEvent) => setEmail1(e.detail.value!)}
                     type="email"
                     style={{ marginLeft: "10px" }}
                   ></IonInput>
                 </IonItem>
                 <br />
-
                 <IonItem>
                   <IonIcon
                     icon={lockClosedOutline}
-                    color="primary"
+                    color="tertiary"
                     slot="end"
                   />
                   <IonInput
                     label="Password"
                     labelPlacement="floating"
-                    color={"primary"}
-                    value={password}
+                    color={"tertiary"}
+                    value={password1}
                     onIonChange={(e: CustomEvent) =>
-                      setPassword(e.detail.value!)
+                      setPassword1(e.detail.value!)
                     }
                     type="password"
                     style={{ marginLeft: "10px" }}
                   ></IonInput>
                 </IonItem>
                 <br />
-                <IonItem lines="none" onClick={handleShowResetPassword}>
-                  {" "}
-                  <IonText color={"primary"}>Forgot Password?</IonText>
-                </IonItem>
-
                 <br />
-
                 <IonButton
                   expand="full"
+                  onClick={handleSignup}
                   style={{ textTransform: "none" }}
-                  color={"primary"}
-                  onClick={handleLogin}
-                  disabled={showSingupupbt}
-                  id="login1"
+                  color={"tertiary"}
+                  disabled={showSingupupbt1}
+                  id="signup1"
                 >
-                  SingIn
+                  SignUp
                 </IonButton>
                 <br />
                 <br />
                 <IonGrid style={{ textAlign: "center" }}>
                   {" "}
                   <IonLabel>
-                    Not yet register?{" "}
+                    Already register?{" "}
                     <IonLabel color={"primary"}>
-                      <Link to={"/SignUp"}>SingUp</Link>
+                      <Link to={"/SignIn"}> SignIn</Link>
                     </IonLabel>
                   </IonLabel>
                 </IonGrid>
-              </IonCardContent>{" "}
-            </IonCard>
-          )}
-
-          {showResetPassword && (
-            <IonCard className="Resetcard">
-              <IonCardHeader
-                style={{
-                  textAlign: "center",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <IonTitle color={"primary"} style={{ fontWeight: "bold" }}>
-                  Reset Password
-                </IonTitle>{" "}
-              </IonCardHeader>
-              <IonCardContent>
-                <IonItem>
-                  <IonIcon icon={mailOutline} color="primary" slot="end" />
-                  <IonInput
-                    label="Email"
-                    labelPlacement="floating"
-                    color={"primary"}
-                    value={email2}
-                    onIonChange={(e: CustomEvent) => setEmail2(e.detail.value!)}
-                    type="email"
-                    style={{ marginLeft: "10px" }}
-                  ></IonInput>
-                </IonItem>
-                <br />
-                <IonItem lines="none">
-                  <IonButton
-                    color={"primary"}
-                    slot="end"
-                    style={{ textTransform: "none" }}
-                    onClick={handleResetPassword}
-                  >
-                    Send
-                  </IonButton>
-                  <IonButton
-                    color={"primary"}
-                    fill="outline"
-                    slot="end"
-                    style={{ textTransform: "none" }}
-                    onClick={handleCancelResetPassword}
-                  >
-                    Cancel
-                  </IonButton>
-                </IonItem>
-
-                <br />
-                {message && <IonNote color={color}>{message} </IonNote>}
               </IonCardContent>
             </IonCard>
           )}
@@ -346,4 +284,4 @@ const SignIn: React.FC = () => {
   );
 };
 
-export default SignIn;
+export default SingUp;

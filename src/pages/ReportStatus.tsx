@@ -41,10 +41,12 @@ import {
   statsChart,
   time,
 } from "ionicons/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../images/logo.png";
 import Menu1 from "../components/Menu1";
 import { Link } from "react-router-dom";
+import { getDocs, collection } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 type ReportStatus =
   | "submitted"
   | "under_review"
@@ -73,13 +75,24 @@ interface ReportUpdate {
   isSystemUpdate: boolean;
 }
 const ReportStatus: React.FC = () => {
+  const [data, setData] = useState<any[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
   const [selectedStatus, setSelectedStatus] = useState<ReportStatus | "all">(
     "all"
   );
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  useEffect(() => {
+    const fetchData = async () => {
+      const querySnapshot = await getDocs(collection(db, "CyberAlert"));
+      const dataArray = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setData(dataArray);
+    };
+    fetchData();
+  }, []);
   useIonViewWillEnter(() => {
     // Simulate loading data
     setTimeout(() => {
@@ -136,137 +149,166 @@ const ReportStatus: React.FC = () => {
   };
   return (
     <IonPage>
-      <Menu1 />
-      <IonPage id="main-content">
-        {" "}
-        <IonHeader class="ion-no-border">
-          <IonToolbar>
-            <Link to={"/"} slot="start">
-              <IonImg
-                src={logo}
-                style={{ height: "50px", width: "50px", marginLeft: "30px" }}
-                slot="start"
-              />
-            </Link>
-            <IonGrid className="menu">
-              {" "}
-              <IonButtons
-                style={{
-                  textTransform: "none",
-                  gap: "10px",
-                }}
+      {" "}
+      <IonHeader class="ion-no-border">
+        <IonToolbar>
+          <Link to={"/"} slot="start">
+            <IonImg
+              src={logo}
+              style={{ height: "50px", width: "50px", marginLeft: "30px" }}
+              slot="start"
+            />
+          </Link>
+          <IonGrid className="menu">
+            {" "}
+            <IonButtons
+              style={{
+                textTransform: "none",
+                gap: "10px",
+              }}
+            >
+              <IonButton
+                routerLink="/"
+                className={location.pathname === "/" ? "active-button" : ""}
               >
-                <IonButton routerLink="/">Home</IonButton>
-                <IonButton routerLink="/Report-status">Report Status</IonButton>
-                <IonButton routerLink="/File-a-complaint">
-                  File a Complaint
-                </IonButton>
-                <IonButton routerLink="/Forum">Forum</IonButton>
-                <IonButton routerLink="/Resources">Resources</IonButton>
-              </IonButtons>
-              <IonButton fill="outline">Sing in</IonButton>
-            </IonGrid>{" "}
-            <IonButtons slot="end" className="menubt">
-              <IonMenuButton></IonMenuButton>{" "}
-            </IonButtons>
-          </IonToolbar>
-          <IonToolbar>
-            <IonTitle>Report Status</IonTitle>
-            <IonButtons slot="end">
-              <IonButton routerLink="/File-a-complaint">
-                <IonIcon slot="icon-only" icon={documentText} />
+                Home
+              </IonButton>
+              <IonButton
+                routerLink="/Report-status"
+                className={
+                  location.pathname === "/Report-status" ? "active-button" : ""
+                }
+              >
+                Report Status
+              </IonButton>
+              <IonButton
+                routerLink="/File-a-complaint"
+                className={
+                  location.pathname === "/File-a-complaint"
+                    ? "active-button"
+                    : ""
+                }
+              >
+                File a Complaint
+              </IonButton>
+              <IonButton
+                routerLink="/Forum"
+                className={
+                  location.pathname === "/Forum" ? "active-button" : ""
+                }
+              >
+                Forum
+              </IonButton>
+              <IonButton
+                routerLink="/Resources"
+                className={
+                  location.pathname === "/Resources" ? "active-button" : ""
+                }
+              >
+                Resources
               </IonButton>
             </IonButtons>
-          </IonToolbar>
+            <IonButton fill="outline" routerLink="/SignIn">
+              Singin
+            </IonButton>
+          </IonGrid>{" "}
+          <IonButtons slot="end" className="menubt">
+            <IonMenuButton></IonMenuButton>{" "}
+          </IonButtons>
+        </IonToolbar>
+        <IonToolbar>
+          <IonTitle>Report Status</IonTitle>
+          <IonButtons slot="end">
+            <IonButton routerLink="/File-a-complaint">
+              <IonIcon slot="icon-only" icon={documentText} />
+            </IonButton>
+          </IonButtons>
+        </IonToolbar>
 
-          <IonToolbar>
-            <IonSegment
-              value={selectedStatus}
-              onIonChange={(e) =>
-                setSelectedStatus(e.detail.value as ReportStatus | "all")
-              }
-              scrollable
-            >
-              <IonSegmentButton value="all">
-                <IonLabel>All</IonLabel>
-              </IonSegmentButton>
-              <IonSegmentButton value="submitted">
-                <IonLabel>Submitted</IonLabel>
-              </IonSegmentButton>
-              <IonSegmentButton value="under_review">
-                <IonLabel>Review</IonLabel>
-              </IonSegmentButton>
-              <IonSegmentButton value="action_taken">
-                <IonLabel>Action</IonLabel>
-              </IonSegmentButton>
-              <IonSegmentButton value="resolved">
-                <IonLabel>Resolved</IonLabel>
-              </IonSegmentButton>
-              <IonSegmentButton value="rejected">
-                <IonLabel>Rejected</IonLabel>
-              </IonSegmentButton>
-            </IonSegment>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent>
-          <IonLoading isOpen={isLoading} message="Loading your reports..." />
+        <IonToolbar>
+          <IonSegment
+            value={selectedStatus}
+            onIonChange={(e) =>
+              setSelectedStatus(e.detail.value as ReportStatus | "all")
+            }
+            scrollable
+          >
+            <IonSegmentButton value="all">
+              <IonLabel>All</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="submitted">
+              <IonLabel>Submitted</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="under_review">
+              <IonLabel>Review</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="action_taken">
+              <IonLabel>Action</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="resolved">
+              <IonLabel>Resolved</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="rejected">
+              <IonLabel>Rejected</IonLabel>
+            </IonSegmentButton>
+          </IonSegment>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent>
+        <IonLoading isOpen={isLoading} message="Loading your reports..." />
 
-          {selectedReport ? (
-            <ReportDetails
-              report={selectedReport}
-              onBack={() => setSelectedReport(null)}
-            />
-          ) : (
-            <>
-              {filteredReports.length === 0 ? (
-                <div className="empty-state">
-                  <IonIcon icon={documentText} size="large" />
-                  <IonText>
-                    <h3>No reports found</h3>
-                    <p>
-                      You haven't submitted any reports yet, or none match your
-                      current filter.
-                    </p>
-                  </IonText>
-                  <IonButton routerLink="/File-a-complaint" fill="outline">
-                    Submit New Report
-                  </IonButton>
-                </div>
-              ) : (
-                <IonList>
-                  {filteredReports.map((report) => (
-                    <IonItem
-                      key={report.id}
-                      onClick={() => setSelectedReport(report)}
-                      detail
-                    >
-                      <IonIcon
-                        slot="start"
-                        icon={getStatusIcon(report.status)}
-                        color={getStatusColor(report.status)}
-                      />
-                      <IonLabel>
-                        <h2>{report.title}</h2>
-                        <p className="report-meta">
-                          <IonText color="medium">
-                            {formatDate(report.dateSubmitted)} • {report.type}
-                          </IonText>
-                        </p>
-                      </IonLabel>
-                      <IonBadge
-                        slot="end"
-                        color={getStatusColor(report.status)}
-                      >
-                        {report.status.replace("_", " ")}
-                      </IonBadge>
-                    </IonItem>
-                  ))}
-                </IonList>
-              )}
-            </>
-          )}
-        </IonContent>
-      </IonPage>
+        {selectedReport ? (
+          <ReportDetails
+            report={selectedReport}
+            onBack={() => setSelectedReport(null)}
+          />
+        ) : (
+          <>
+            {filteredReports.length === 0 ? (
+              <div className="empty-state">
+                <IonIcon icon={documentText} size="large" />
+                <IonText>
+                  <h3>No reports found</h3>
+                  <p>
+                    You haven't submitted any reports yet, or none match your
+                    current filter.
+                  </p>
+                </IonText>
+                <IonButton routerLink="/File-a-complaint" fill="outline">
+                  Submit New Report
+                </IonButton>
+              </div>
+            ) : (
+              <IonList>
+                {filteredReports.map((report) => (
+                  <IonItem
+                    key={report.id}
+                    onClick={() => setSelectedReport(report)}
+                    detail
+                  >
+                    <IonIcon
+                      slot="start"
+                      icon={getStatusIcon(report.status)}
+                      color={getStatusColor(report.status)}
+                    />
+                    <IonLabel>
+                      <h2>{report.title}</h2>
+                      <p className="report-meta">
+                        <IonText color="medium">
+                          {formatDate(report.dateSubmitted)} • {report.type}
+                        </IonText>
+                      </p>
+                    </IonLabel>
+                    <IonBadge slot="end" color={getStatusColor(report.status)}>
+                      {report.status.replace("_", " ")}
+                    </IonBadge>
+                  </IonItem>
+                ))}
+              </IonList>
+            )}
+          </>
+        )}
+      </IonContent>
     </IonPage>
   );
 };

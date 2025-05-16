@@ -26,8 +26,22 @@ ion-button#login1::part(native),
   color: black;
   padding: 10px;
   font-weight: bold;
+  border-radius: 2px;
+}
+ion-col > a {
+  gap: 50px;
 }
 #back {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 20%;
+  padding-right: 20%;
+  padding-top: 8%;
+  height: 70vh;
+  width: 100vw;
+}
+#back1 {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -89,6 +103,7 @@ ion-button#login1::part(native),
   padding: 5px;
   color: var(--ion-color-dark);
 }
+
 .cards1 {
   width: 40%;
   padding: 5px;
@@ -180,11 +195,27 @@ ion-footer ion-col {
 .progress-indicator {
   margin: 20px 0;
   text-align: center;
+  justify-content: center;
+  align-items: center;
+  display: flex;
 }
-
+.fab {
+  display: none;
+}
 .step-circle {
   width: 30px;
   height: 30px;
+  border-radius: 50%;
+  background-color: var(--ion-color-light);
+  color: var(--ion-color-dark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+.step1-circle {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background-color: var(--ion-color-light);
   color: var(--ion-color-dark);
@@ -198,6 +229,10 @@ ion-footer ion-col {
   background-color: var(--ion-color-primary);
   color: white;
 }
+.step1-circle.active {
+  background-color: var(--ion-color-dark);
+  color: white;
+}
 
 .step-label {
   font-size: 12px;
@@ -208,12 +243,15 @@ ion-footer ion-col {
 .step-circle.active + .step-label {
   color: var(--ion-color-primary);
 }
+.step1-circle.active + .step-label {
+  color: var(--ion-color-primary);
+}
 
 .form-step {
   max-width: 800px;
   margin: 5px auto;
-  padding-left: 5px;
-  padding-right: 5px;
+  padding-left: 15px;
+  padding-right: 10px;
 }
 
 ion-item {
@@ -465,7 +503,21 @@ ion-card-title {
   margin-top: 24px;
 }
 
-/* Status badge enhancements */
+.active-button {
+  position: relative;
+  --color: var(--ion-color-primary);
+}
+.active-button::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 2px;
+  background-color: var(--ion-color-primary);
+}
+
 ion-badge[color="warning"] {
   background: var(--ion-color-warning);
   color: var(--ion-color-warning-contrast);
@@ -490,7 +542,7 @@ ion-badge[color="tertiary"] {
   background: var(--ion-color-tertiary);
   color: var(--ion-color-tertiary-contrast);
 }
-/* Category badges */
+
 ion-badge[color="warning"] {
   background: var(--ion-color-warning);
 }
@@ -506,9 +558,32 @@ ion-badge[color="dark"] {
 ion-badge[color="medium"] {
   background: var(--ion-color-medium);
 }
+.add {
+  display: block;
+}
+.item-contain {
+  justify-content: center;
+  display: flex;
+  width: 100%;
+}
+.footer {
+  padding-right: 20%;
+  padding-left: 20%;
+}
 @media (max-width: 768px) {
+  .item-contain {
+    display: block;
+    width: 100%;
+  }
   .resource-grid {
     grid-template-columns: 1fr;
+  }
+  .grids {
+    width: 100%;
+  }
+  .footer {
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 @media (max-width: 954px) {
@@ -552,6 +627,14 @@ ion-badge[color="medium"] {
     height: 97vh;
     width: 100vw;
   }
+  #back1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 2%;
+    padding-right: 2%;
+    margin-top: 3em;
+  }
   .back {
     display: flex;
     flex-wrap: wrap;
@@ -568,5 +651,11 @@ ion-badge[color="medium"] {
   .cards1 {
     width: 100%;
     padding: 3px;
+  }
+  .fab {
+    display: block;
+  }
+  .add {
+    display: none;
   }
 }

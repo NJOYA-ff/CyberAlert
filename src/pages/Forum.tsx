@@ -5,6 +5,8 @@ import {
   IonButton,
   IonButtons,
   IonContent,
+  IonFab,
+  IonFabButton,
   IonGrid,
   IonHeader,
   IonIcon,
@@ -36,11 +38,19 @@ import {
   chatbubbleOutline,
   closeOutline,
   timeOutline,
+  add,
 } from "ionicons/icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../images/logo.png";
 import Menu1 from "../components/Menu1";
 import { Link } from "react-router-dom";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db } from "../firebaseConfig";
 interface ForumPost {
   id: string;
   title: string;
@@ -54,6 +64,7 @@ interface ForumPost {
 }
 const Forum: React.FC = () => {
   const [posts, setPosts] = useState<ForumPost[]>([]);
+  const [data, setData] = useState<any[]>([]);
   const [showNewPostModal, setShowNewPostModal] = useState(false);
   const [newPostTitle, setNewPostTitle] = useState("");
   const [newPostContent, setNewPostContent] = useState("");
@@ -70,10 +81,34 @@ const Forum: React.FC = () => {
       setIsLoading(false);
     }, 1000);
   });
-
+  useEffect(() => {
+    const fetchData = async () => {
+      const querySnapshot = await getDocs(collection(db, "CyberAlert_Post"));
+      const dataArray = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setData(dataArray);
+    };
+    fetchData();
+  }, []);
+  const handleStoreInfo = async () => {
+    if (newPostTitle !== "" && newPostContent !== "") {
+      try {
+        const docRef = await addDoc(collection(db, "CyberAlert_Post"), {
+          field1: newPostTitle,
+          field2: newPostContent,
+          timestamp: serverTimestamp(),
+        });
+        console.log("transcript written with ID:", docRef.id);
+      } catch (e) {
+        console.error("Error adding transcript:", e);
+      }
+    }
+  };
   const handleCreatePost = () => {
     if (!newPostTitle.trim() || !newPostContent.trim()) return;
-
+    handleStoreInfo();
     const newPost: ForumPost = {
       id: Date.now().toString(),
       title: newPostTitle,
@@ -91,7 +126,14 @@ const Forum: React.FC = () => {
     setNewPostContent("");
     setShowNewPostModal(false);
   };
-
+  const formatDate = (timestamp: any) => {
+    if (!timestamp) return "No date available";
+    const date = timestamp.toDate();
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+    };
+    return date.toLocaleString("en-US", options);
+  };
   const handleUpvote = (postId: string) => {
     setPosts(
       posts.map((post) =>
@@ -110,187 +152,226 @@ const Forum: React.FC = () => {
   });
   return (
     <IonPage>
-      <Menu1 />
-      <IonPage id="main-content">
-        {" "}
-        <IonHeader class="ion-no-border">
-          <IonToolbar>
-            <Link to={"/"} slot="start">
-              <IonImg
-                src={logo}
-                style={{ height: "50px", width: "50px", marginLeft: "30px" }}
-                slot="start"
-              />
-            </Link>
-            <IonGrid className="menu">
-              {" "}
-              <IonButtons
-                style={{
-                  textTransform: "none",
-                  gap: "10px",
-                }}
+      <IonHeader class="ion-no-border">
+        <IonToolbar>
+          <Link to={"/"} slot="start">
+            <IonImg
+              src={logo}
+              style={{ height: "50px", width: "50px", marginLeft: "30px" }}
+              slot="start"
+            />
+          </Link>
+          <IonGrid className="menu">
+            {" "}
+            <IonButtons
+              style={{
+                textTransform: "none",
+                gap: "10px",
+              }}
+            >
+              <IonButton
+                routerLink="/"
+                className={location.pathname === "/" ? "active-button" : ""}
               >
-                <IonButton routerLink="/">Home</IonButton>
-                <IonButton routerLink="/Report-status">Report Status</IonButton>
-                <IonButton routerLink="/File-a-complaint">
-                  File a Complaint
-                </IonButton>
-                <IonButton routerLink="/Forum">Forum</IonButton>
-                <IonButton routerLink="/Resources">Resources</IonButton>
-              </IonButtons>
-              <IonButton fill="outline">Sing in</IonButton>
-            </IonGrid>{" "}
-            <IonButtons slot="end" className="menubt">
-              <IonMenuButton></IonMenuButton>{" "}
+                Home
+              </IonButton>
+              <IonButton
+                routerLink="/Report-status"
+                className={
+                  location.pathname === "/Report-status" ? "active-button" : ""
+                }
+              >
+                Report Status
+              </IonButton>
+              <IonButton
+                routerLink="/File-a-complaint"
+                className={
+                  location.pathname === "/File-a-complaint"
+                    ? "active-button"
+                    : ""
+                }
+              >
+                File a Complaint
+              </IonButton>
+              <IonButton
+                routerLink="/Forum"
+                className={
+                  location.pathname === "/Forum" ? "active-button" : ""
+                }
+              >
+                Forum
+              </IonButton>
+              <IonButton
+                routerLink="/Resources"
+                className={
+                  location.pathname === "/Resources" ? "active-button" : ""
+                }
+              >
+                Resources
+              </IonButton>
             </IonButtons>
-          </IonToolbar>
-          <IonToolbar>
-            <IonTitle>Cyber Crime Forum</IonTitle>
+            <IonButton fill="outline" routerLink="/SignIn">
+              Singin
+            </IonButton>
+          </IonGrid>{" "}
+          <IonButtons slot="end" className="menubt">
+            <IonMenuButton></IonMenuButton>{" "}
+          </IonButtons>
+        </IonToolbar>
+        <IonToolbar>
+          <IonTitle> Forum</IonTitle>
+          <IonButtons slot="end" className="add">
+            <IonButton onClick={() => setShowNewPostModal(true)}>
+              <IonIcon slot="icon-only" icon={addOutline} />
+            </IonButton>
+          </IonButtons>
+        </IonToolbar>
+
+        <IonToolbar>
+          <IonSearchbar
+            value={searchQuery}
+            onIonChange={(e) => setSearchQuery(e.detail.value!)}
+            placeholder="Search posts..."
+          />
+        </IonToolbar>
+        <IonToolbar>
+          <IonSegment
+            value={selectedCategory}
+            onIonChange={(e) => setSelectedCategory(e.detail.value as any)}
+            scrollable
+          >
+            <IonSegmentButton value="all">
+              <IonLabel>All</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="scam">
+              <IonLabel>Scams</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="phishing">
+              <IonLabel>Phishing</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="hacking">
+              <IonLabel>Hacking</IonLabel>
+            </IonSegmentButton>
+            <IonSegmentButton value="other">
+              <IonLabel>Other</IonLabel>
+            </IonSegmentButton>
+          </IonSegment>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent fullscreen>
+        <IonLoading isOpen={isLoading} message="Loading forum posts..." />
+
+        {filteredPosts.length === 0 && !isLoading ? (
+          <div className="empty-state">
+            <IonIcon icon={alertCircleOutline} size="large" />
+            <IonText>
+              <p>No posts found. Be the first to share your experience!</p>
+            </IonText>
+          </div>
+        ) : (
+          <IonGrid>
+            {data.map((item) => (
+              <IonList>
+                {filteredPosts.map((post) => (
+                  <IonItem
+                    key={post.id}
+                    routerLink={`/forum/post/${post.id}`}
+                    detail
+                  >
+                    <div slot="start" className="upvote-container">
+                      <IonButton
+                        fill="clear"
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleUpvote(post.id);
+                        }}
+                      >
+                        <IonIcon icon={arrowUpOutline} />
+                        {post.upvotes}
+                      </IonButton>
+                    </div>
+
+                    <div className="post-content">
+                      <IonLabel>
+                        <h2>{item.field1}</h2>
+                        <p className="post-preview">{item.field2}</p>
+                      </IonLabel>
+
+                      <div className="post-meta">
+                        <IonAvatar slot="start" className="avatar">
+                          <img src={post.authorAvatar} alt={post.author} />
+                        </IonAvatar>
+                        <IonText color="medium" className="author">
+                          {post.author}
+                        </IonText>
+                        <IonText color="medium" className="date">
+                          <IonIcon icon={timeOutline} />{" "}
+                          {formatDate(item.timestamp)}
+                        </IonText>
+                        <IonBadge color={getCategoryColor(post.category)}>
+                          {post.category}
+                        </IonBadge>
+                        <div className="comments">
+                          <IonIcon icon={chatbubbleOutline} />
+                          {post.comments}
+                        </div>
+                      </div>
+                    </div>
+                  </IonItem>
+                ))}
+              </IonList>
+            ))}{" "}
+          </IonGrid>
+        )}
+        <IonFab slot="fixed" horizontal="end" vertical="bottom" className="fab">
+          <IonFabButton onClick={() => setShowNewPostModal(true)}>
+            <IonIcon icon={add} />
+          </IonFabButton>{" "}
+        </IonFab>
+      </IonContent>
+      <IonModal
+        isOpen={showNewPostModal}
+        onDidDismiss={() => setShowNewPostModal(false)}
+      >
+        <IonHeader>
+          <IonToolbar color="primary">
+            <IonButtons slot="start">
+              <IonButton onClick={() => setShowNewPostModal(false)}>
+                <IonIcon slot="icon-only" icon={closeOutline} />
+              </IonButton>
+            </IonButtons>
+            <IonTitle>New Post</IonTitle>
             <IonButtons slot="end">
-              <IonButton onClick={() => setShowNewPostModal(true)}>
-                <IonIcon slot="icon-only" icon={addOutline} />
+              <IonButton strong onClick={handleCreatePost}>
+                Post
               </IonButton>
             </IonButtons>
           </IonToolbar>
-
-          <IonToolbar>
-            <IonSearchbar
-              value={searchQuery}
-              onIonChange={(e) => setSearchQuery(e.detail.value!)}
-              placeholder="Search posts..."
-            />
-          </IonToolbar>
-          <IonToolbar>
-            <IonSegment
-              value={selectedCategory}
-              onIonChange={(e) => setSelectedCategory(e.detail.value as any)}
-              scrollable
-            >
-              <IonSegmentButton value="all">
-                <IonLabel>All</IonLabel>
-              </IonSegmentButton>
-              <IonSegmentButton value="scam">
-                <IonLabel>Scams</IonLabel>
-              </IonSegmentButton>
-              <IonSegmentButton value="phishing">
-                <IonLabel>Phishing</IonLabel>
-              </IonSegmentButton>
-              <IonSegmentButton value="hacking">
-                <IonLabel>Hacking</IonLabel>
-              </IonSegmentButton>
-              <IonSegmentButton value="other">
-                <IonLabel>Other</IonLabel>
-              </IonSegmentButton>
-            </IonSegment>
-          </IonToolbar>
         </IonHeader>
-        <IonContent fullscreen>
-          <IonLoading isOpen={isLoading} message="Loading forum posts..." />
-
-          {filteredPosts.length === 0 && !isLoading ? (
-            <div className="empty-state">
-              <IonIcon icon={alertCircleOutline} size="large" />
-              <IonText>
-                <p>No posts found. Be the first to share your experience!</p>
-              </IonText>
-            </div>
-          ) : (
-            <IonList>
-              {filteredPosts.map((post) => (
-                <IonItem
-                  key={post.id}
-                  routerLink={`/forum/post/${post.id}`}
-                  detail
-                >
-                  <div slot="start" className="upvote-container">
-                    <IonButton
-                      fill="clear"
-                      size="small"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleUpvote(post.id);
-                      }}
-                    >
-                      <IonIcon icon={arrowUpOutline} />
-                      {post.upvotes}
-                    </IonButton>
-                  </div>
-
-                  <div className="post-content">
-                    <IonLabel>
-                      <h2>{post.title}</h2>
-                      <p className="post-preview">
-                        {post.content.substring(0, 100)}...
-                      </p>
-                    </IonLabel>
-
-                    <div className="post-meta">
-                      <IonAvatar slot="start" className="avatar">
-                        <img src={post.authorAvatar} alt={post.author} />
-                      </IonAvatar>
-                      <IonText color="medium" className="author">
-                        {post.author}
-                      </IonText>
-                      <IonText color="medium" className="date">
-                        <IonIcon icon={timeOutline} /> {post.date}
-                      </IonText>
-                      <IonBadge color={getCategoryColor(post.category)}>
-                        {post.category}
-                      </IonBadge>
-                      <div className="comments">
-                        <IonIcon icon={chatbubbleOutline} />
-                        {post.comments}
-                      </div>
-                    </div>
-                  </div>
-                </IonItem>
-              ))}
-            </IonList>
-          )}
+        <IonContent className="ion-padding">
+          <IonInput
+            placeholder="Title"
+            value={newPostTitle}
+            onIonChange={(e) => setNewPostTitle(e.detail.value!)}
+            className="post-title-input"
+          />
+          <IonTextarea
+            placeholder="Share your experience or advice..."
+            autoGrow
+            value={newPostContent}
+            onIonChange={(e) => setNewPostContent(e.detail.value!)}
+            rows={10}
+          />
+          <IonText color="medium" className="post-guidelines">
+            <p>
+              <strong>Community Guidelines:</strong> Be respectful. Share
+              factual information. Don't share personal details. Help others
+              stay safe.
+            </p>
+          </IonText>
         </IonContent>
-        <IonModal
-          isOpen={showNewPostModal}
-          onDidDismiss={() => setShowNewPostModal(false)}
-        >
-          <IonHeader>
-            <IonToolbar color="primary">
-              <IonButtons slot="start">
-                <IonButton onClick={() => setShowNewPostModal(false)}>
-                  <IonIcon slot="icon-only" icon={closeOutline} />
-                </IonButton>
-              </IonButtons>
-              <IonTitle>New Post</IonTitle>
-              <IonButtons slot="end">
-                <IonButton strong onClick={handleCreatePost}>
-                  Post
-                </IonButton>
-              </IonButtons>
-            </IonToolbar>
-          </IonHeader>
-          <IonContent className="ion-padding">
-            <IonInput
-              placeholder="Title"
-              value={newPostTitle}
-              onIonChange={(e) => setNewPostTitle(e.detail.value!)}
-              className="post-title-input"
-            />
-            <IonTextarea
-              placeholder="Share your experience or advice..."
-              autoGrow
-              value={newPostContent}
-              onIonChange={(e) => setNewPostContent(e.detail.value!)}
-              rows={10}
-            />
-            <IonText color="medium" className="post-guidelines">
-              <p>
-                <strong>Community Guidelines:</strong> Be respectful. Share
-                factual information. Don't share personal details. Help others
-                stay safe.
-              </p>
-            </IonText>
-          </IonContent>
-        </IonModal>
-      </IonPage>
+      </IonModal>
     </IonPage>
   );
 };

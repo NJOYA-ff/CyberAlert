@@ -44,6 +44,7 @@ import ReportStatus from "./pages/ReportStatus";
 import Resources from "./pages/Resources";
 import Menu1 from "./components/Menu1";
 import SignIn from "./pages/SignIn";
+import SingUp from "./pages/SingUp";
 
 setupIonicReact();
 const App: React.FC = () => {
@@ -71,6 +72,7 @@ const App: React.FC = () => {
               render={() => <FileAComplaint />}
             />
             <Route path="/SignIn" exact={true} render={() => <SignIn />} />
+            <Route path="/SignUp" exact={true} render={() => <SingUp />} />
           </IonRouterOutlet>
         </IonSplitPane>
       </IonReactRouter>

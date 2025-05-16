@@ -64,7 +64,9 @@ const Menu1: React.FC = () => {
               Sing In
             </IonButton>
             <br />
-            <IonButton expand="full">Sing Up</IonButton>
+            <IonButton expand="full" routerLink="/SignUp">
+              Sing Up
+            </IonButton>
             <br />
           </IonMenuToggle>
 
