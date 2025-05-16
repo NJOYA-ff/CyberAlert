@@ -7,7 +7,6 @@ import {
 import { IonReactRouter } from "@ionic/react-router";
 import { Redirect, Route } from "react-router-dom";
 import Menu from "./components/Menu";
-import Page from "./pages/Page";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -38,55 +37,40 @@ import "@ionic/react/css/palettes/dark.system.css";
 
 /* Theme variables */
 import "./theme/variables.css";
-import Longin from "./pages/Longin";
 import Home from "./pages/Home";
-import Conversation from "./pages/Conversation";
-import Texttotext from "./pages/Text-to-text";
-import Mictomic from "./pages/Mic-to-mic";
-import Favorite from "./pages/Favorite";
-import SpeechtoTextPage from "./pages/Speech-to-text";
-import History from "./pages/History";
-import CamDialectAI from "./pages/CamDialectAI";
+import Forum from "./pages/Forum";
+import FileAComplaint from "./pages/FileAComplaint";
+import ReportStatus from "./pages/ReportStatus";
+import Resources from "./pages/Resources";
+import Menu1 from "./components/Menu1";
+import SignIn from "./pages/SignIn";
 
 setupIonicReact();
 const App: React.FC = () => {
   return (
     <IonApp>
       <IonReactRouter>
+        <Menu1 />
         <IonSplitPane contentId="main">
           <IonRouterOutlet id="main">
-            <Route path="/" exact={true} render={() => <Longin />} />
-            <Route path="/Home" exact={true} render={() => <Home />} />
+            <Route path="/" exact={true} render={() => <Home />} />
+            <Route path="/Forum" exact={true} render={() => <Forum />} />
             <Route
-              path="/Conversation"
+              path="/Resources"
               exact={true}
-              render={() => <Conversation />}
+              render={() => <Resources />}
             />
             <Route
-              path="/Speech-to-text"
+              path="/Report-status"
               exact={true}
-              render={() => <SpeechtoTextPage />}
+              render={() => <ReportStatus />}
             />
             <Route
-              path="/Mic-to-mic"
+              path="/File-a-complaint"
               exact={true}
-              render={() => <Mictomic />}
+              render={() => <FileAComplaint />}
             />
-            <Route
-              path="/Text-to-text"
-              exact={true}
-              render={() => <Texttotext />}
-            />
-            <Route path="/Favorite" exact={true} render={() => <Favorite />} />
-            <Route path="/History" exact={true} render={() => <History />} />
-            <Route
-              path={"/CamDialectAI"}
-              exact={true}
-              render={() => <CamDialectAI />}
-            />
-            {/* <Route path="/folder/:name" exact={true}>
-              <Page />
-            </Route> */}
+            <Route path="/SignIn" exact={true} render={() => <SignIn />} />
           </IonRouterOutlet>
         </IonSplitPane>
       </IonReactRouter>
