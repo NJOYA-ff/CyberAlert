@@ -13,6 +13,7 @@ import {
   IonItem,
   IonLabel,
   IonMenuButton,
+  IonNote,
   IonPage,
   IonTitle,
   IonToolbar,
@@ -36,6 +37,7 @@ import {
 import "../pages/Pages.scss";
 import { storage } from "../firebaseConfig";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import flag from "../images/flag.jpg";
 const SingUp: React.FC = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -118,6 +120,23 @@ const SingUp: React.FC = () => {
   return (
     <IonPage>
       <IonHeader class="ion-no-border">
+        <IonToolbar className="Ttoolbar">
+          <IonGrid
+            className="Ttoolbar"
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+            }}
+          >
+            <IonImg src={flag} className="flag" />
+            <IonNote className="note">
+              An Official Website of Cameroon Government{" "}
+              <Link to={"#"}> Here's how you know</Link>{" "}
+            </IonNote>
+          </IonGrid>
+        </IonToolbar>
         <IonToolbar>
           <Link to={"/"} slot="start">
             {" "}
@@ -176,7 +195,7 @@ const SingUp: React.FC = () => {
                 Resources
               </IonButton>
             </IonButtons>
-            <IonButton fill="outline" routerLink="/SignIn">
+            <IonButton fill="outline" routerLink="/SignIn" color={"light"}>
               Singin
             </IonButton>
           </IonGrid>{" "}

@@ -46,6 +46,7 @@ import logo from "../images/logo.png";
 import Menu1 from "../components/Menu1";
 import { Link } from "react-router-dom";
 import { getDocs, collection } from "firebase/firestore";
+import flag from "../images/flag.jpg";
 import { db } from "../firebaseConfig";
 type ReportStatus =
   | "submitted"
@@ -151,6 +152,23 @@ const ReportStatus: React.FC = () => {
     <IonPage>
       {" "}
       <IonHeader class="ion-no-border">
+        <IonToolbar className="Ttoolbar">
+          <IonGrid
+            className="Ttoolbar"
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+            }}
+          >
+            <IonImg src={flag} className="flag" />
+            <IonNote className="note">
+              An Official Website of Cameroon Government{" "}
+              <Link to={"#"}> Here's how you know</Link>{" "}
+            </IonNote>
+          </IonGrid>
+        </IonToolbar>
         <IonToolbar>
           <Link to={"/"} slot="start">
             <IonImg
@@ -208,7 +226,7 @@ const ReportStatus: React.FC = () => {
                 Resources
               </IonButton>
             </IonButtons>
-            <IonButton fill="outline" routerLink="/SignIn">
+            <IonButton fill="outline" color={"light"} routerLink="/SignIn">
               Singin
             </IonButton>
           </IonGrid>{" "}
@@ -219,7 +237,7 @@ const ReportStatus: React.FC = () => {
         <IonToolbar>
           <IonTitle>Report Status</IonTitle>
           <IonButtons slot="end">
-            <IonButton routerLink="/File-a-complaint">
+            <IonButton routerLink="/File-a-complaint" className="Rbt">
               <IonIcon slot="icon-only" icon={documentText} />
             </IonButton>
           </IonButtons>
@@ -231,9 +249,11 @@ const ReportStatus: React.FC = () => {
             onIonChange={(e) =>
               setSelectedStatus(e.detail.value as ReportStatus | "all")
             }
+            color={"warning"}
+            style={{ color: "white" }}
             scrollable
           >
-            <IonSegmentButton value="all">
+            <IonSegmentButton className="ion-segment-button" value="all">
               <IonLabel>All</IonLabel>
             </IonSegmentButton>
             <IonSegmentButton value="submitted">
@@ -274,7 +294,11 @@ const ReportStatus: React.FC = () => {
                     current filter.
                   </p>
                 </IonText>
-                <IonButton routerLink="/File-a-complaint" fill="outline">
+                <IonButton
+                  routerLink="/File-a-complaint"
+                  fill="outline"
+                  className="Rbt"
+                >
                   Submit New Report
                 </IonButton>
               </div>
@@ -435,11 +459,16 @@ const ReportDetails: React.FC<{ report: Report; onBack: () => void }> = ({
           </div>
 
           <div className="report-actions">
-            <IonButton expand="block" fill="outline">
+            <IonButton expand="block" fill="outline" className="Rbt">
               <IonIcon slot="start" icon={alertCircle} />
               Add Additional Information
             </IonButton>
-            <IonButton expand="block" color="danger" fill="outline">
+            <IonButton
+              expand="block"
+              color="danger"
+              fill="outline"
+              className="Rbt1"
+            >
               <IonIcon slot="start" icon={closeCircle} />
               Withdraw Report
             </IonButton>

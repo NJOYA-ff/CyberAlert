@@ -15,7 +15,9 @@ import {
   IonImg,
   IonItem,
   IonLabel,
+  IonList,
   IonMenuButton,
+  IonNote,
   IonPage,
   IonRow,
   IonText,
@@ -25,15 +27,19 @@ import {
 } from "@ionic/react";
 import {
   alertCircle,
+  callOutline,
   chatbubbleEllipses,
   documentTextOutline,
   footsteps,
+  locationOutline,
   logoFacebook,
   logoFlickr,
   logoInstagram,
   logoLinkedin,
   logoRss,
+  logoTwitter,
   logoYoutube,
+  mailOutline,
   shield,
 } from "ionicons/icons";
 import React, { useEffect, useState } from "react";
@@ -46,7 +52,7 @@ import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
 import { getDocs, collection } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-
+import flag from "../images/flag.jpg";
 const Home: React.FC = () => {
   const [data, setData] = useState<any[]>([]);
   const fileacomplaint = () => {
@@ -99,6 +105,23 @@ const Home: React.FC = () => {
   return (
     <IonPage>
       <IonHeader class="ion-no-border">
+        <IonToolbar className="Ttoolbar">
+          <IonGrid
+            className="Ttoolbar"
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+            }}
+          >
+            <IonImg src={flag} className="flag" />
+            <IonNote className="note">
+              An Official Website of Cameroon Government{" "}
+              <Link to={"#"}> Here's how you know</Link>{" "}
+            </IonNote>
+          </IonGrid>
+        </IonToolbar>
         <IonToolbar>
           <Link to="/" slot="start">
             <IonImg
@@ -163,6 +186,7 @@ const Home: React.FC = () => {
             </IonButtons>
             <IonButton
               fill="outline"
+              color={"light"}
               routerLink="/SignIn"
               className={location.pathname === "/SignIn" ? "active-button" : ""}
             >
@@ -179,7 +203,7 @@ const Home: React.FC = () => {
         <IonGrid
           id="back"
           style={{
-            backgroundImage: `linear-gradient(to top, rgba(21, 21, 21, 0), rgba(21, 21, 21, 0.75),rgba(21, 21, 21, 0.81)),url(${background})`,
+            backgroundImage: `linear-gradient(to top, rgba(255, 255, 255, 0), rgba(21, 21, 21, 0.49),rgba(21, 21, 21, 0.81)),url(${background})`,
             backgroundPosition: "center",
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
@@ -263,7 +287,7 @@ const Home: React.FC = () => {
                   fontSize: "18px",
                   fontWeight: "bold",
                 }}
-                onClick={fileacomplaint}
+                routerLink="File-a-complaint"
               >
                 <IonIcon
                   icon={documentTextOutline}
@@ -284,7 +308,7 @@ const Home: React.FC = () => {
               {" "}
               <div
                 style={{
-                  backgroundColor: "var(--ion-color-dark)",
+                  backgroundColor: "var(--ion-color-light)",
                   width: "85%",
                   height: "2px",
                 }}
@@ -465,7 +489,7 @@ const Home: React.FC = () => {
           <br />
           <div
             style={{
-              backgroundColor: "var(--ion-color-dark)",
+              backgroundColor: "var(--ion-color-medium)",
               width: "85%",
               height: "2px",
             }}
@@ -530,63 +554,112 @@ const Home: React.FC = () => {
             </IonGrid>
           </div>
         </IonGrid>{" "}
-        <IonFooter>
-          <IonToolbar className="footer">
+        <IonFooter className="cyber-footer" translucent={false}>
+          <IonToolbar className="footer-toolbar">
             <IonGrid>
+              {/* Main footer content */}
               <IonRow>
-                <IonCol>
-                  <strong>CyberAlert</strong>
-                  <br />
-                  <a href="/">Home Page</a>
-                  <br />
-                  <a href="#">Privacy Policy</a>
-                  <br />
-                  <a href="#">About CyberAlert</a>
+                {/* Quick Links */}
+                <IonCol size="12" sizeMd="3">
+                  <IonTitle className="footer-title">Liens Rapides</IonTitle>
+                  <IonList lines="none" className="footer-list">
+                    <IonItem routerLink="/alerts" className="footer-item">
+                      <IonLabel>Alerts</IonLabel>
+                    </IonItem>
+                    <IonItem routerLink="/report" className="footer-item">
+                      <IonLabel>Report</IonLabel>
+                    </IonItem>
+                    <IonItem routerLink="/resources" className="footer-item">
+                      <IonLabel>Ressources</IonLabel>
+                    </IonItem>
+                    <IonItem routerLink="/about" className="footer-item">
+                      <IonLabel>About</IonLabel>
+                    </IonItem>
+                  </IonList>
                 </IonCol>
-                <IonCol>
-                  <strong>Cameroon Police</strong>
-                  <br />
-                  <a href="#">Home Page</a>
-                  <br />
-                  <a href="#">Privacy Policy</a>
-                  <br />
-                  <a href="#">About Cameroon</a>
+
+                {/* Contact Info */}
+                <IonCol size="12" sizeMd="4">
+                  <IonTitle className="footer-title">Contact Us</IonTitle>
+                  <IonList lines="none" className="footer-list">
+                    <IonItem className="footer-item">
+                      <IonIcon
+                        icon={locationOutline}
+                        slot="start"
+                        color="liht"
+                      />
+                      <IonLabel>MINPOSTEL, Yaoundé, Cameroun</IonLabel>
+                    </IonItem>
+                    <IonItem className="footer-item">
+                      <IonIcon icon={callOutline} slot="start" color="liht" />
+                      <IonLabel>(+237) 222 22 22 22</IonLabel>
+                    </IonItem>
+                    <IonItem className="footer-item">
+                      <IonIcon icon={mailOutline} slot="start" color="liht" />
+                      <IonLabel>contact@cyberalert.cm</IonLabel>
+                    </IonItem>
+                  </IonList>
                 </IonCol>
-                <IonCol>
-                  <strong>ANTIC</strong>
-                  <br />
-                  <a href="#">Home Page</a>
-                  <br />
-                  <a href="#">Privacy Policy</a>
-                  <br />
-                  <a href="#">About ANTIC</a>
+
+                {/* Social Media */}
+                <IonCol size="12" sizeMd="3">
+                  <IonTitle className="footer-title">Follow Us</IonTitle>
+                  <IonList lines="none" className="footer-list social-list">
+                    <IonItem
+                      href="https://facebook.com/cyberalertcm"
+                      target="_blank"
+                      className="footer-item"
+                    >
+                      <IonIcon icon={logoFacebook} slot="start" color="liht" />
+                      <IonLabel>Facebook</IonLabel>
+                    </IonItem>
+                    <IonItem
+                      href="https://twitter.com/cyberalertcm"
+                      target="_blank"
+                      className="footer-item"
+                    >
+                      <IonIcon icon={logoTwitter} slot="start" color="liht" />
+                      <IonLabel>Twitter</IonLabel>
+                    </IonItem>
+                    <IonItem
+                      href="https://linkedin.com/company/cyberalertcm"
+                      target="_blank"
+                      className="footer-item"
+                    >
+                      <IonIcon icon={logoLinkedin} slot="start" color="liht" />
+                      <IonLabel>LinkedIn</IonLabel>
+                    </IonItem>
+                  </IonList>
                 </IonCol>
-                <IonCol>
-                  <strong>Contact the Press Office</strong>
-                  <br />
-                  (+237) 119
-                  <br />
-                  <a href="#">Accessibility Statement</a>
-                  <br />
-                  <a href="#">Questions? See the CyberAlert FAQ</a>
+
+                {/* Emergency Contact */}
+                <IonCol size="12" sizeMd="2">
+                  <div className="emergency-box">
+                    <IonTitle className="emergency-title">Emergency</IonTitle>
+                    <div className="emergency-number">117</div>
+                    <p className="emergency-text">
+                      Cyber alert emergency number
+                    </p>
+                  </div>
                 </IonCol>
               </IonRow>
-            </IonGrid>
-          </IonToolbar>
-        </IonFooter>
-        <IonFooter>
-          <IonToolbar
-            class="ion-no-border"
-            color={"secondary"}
-            style={{ paddingLeft: "20%", paddingRight: "20%" }}
-          >
-            <IonGrid style={{ gap: "10px", fontSize: "22px", display: "flex" }}>
-              {" "}
-              <IonIcon icon={logoYoutube} />
-              <IonIcon icon={logoFacebook} />
-              <IonIcon icon={logoLinkedin} />
-              <IonIcon icon={logoInstagram} />
-              <IonIcon icon={logoFlickr} />
+
+              {/* Copyright and bottom bar */}
+              <IonRow>
+                <IonCol size="12">
+                  <div className="footer-bottom">
+                    <p>
+                      © {new Date().getFullYear()} Cyber Alert center Cameroun.
+                      All rights reserved.
+                    </p>
+                    <div className="footer-links">
+                      <a href="/privacy">Confidentiality</a>
+                      <a href="/accessibility">Accessibility</a>
+                      <a href="/disclaimer">Warning</a>
+                    </div>
+                  </div>
+                </IonCol>
+              </IonRow>
             </IonGrid>
           </IonToolbar>
         </IonFooter>

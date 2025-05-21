@@ -60,11 +60,11 @@ const Menu1: React.FC = () => {
           <IonMenuToggle autoHide={false}>
             <br />
             <br />
-            <IonButton expand="full" routerLink="/SignIn">
+            <IonButton className="bttm" expand="full" routerLink="/SignIn">
               Sing In
             </IonButton>
             <br />
-            <IonButton expand="full" routerLink="/SignUp">
+            <IonButton className="bttm" expand="full" routerLink="/SignUp">
               Sing Up
             </IonButton>
             <br />

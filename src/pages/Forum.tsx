@@ -19,6 +19,7 @@ import {
   IonMenu,
   IonMenuButton,
   IonModal,
+  IonNote,
   IonPage,
   IonSearchbar,
   IonSegment,
@@ -44,6 +45,7 @@ import React, { useEffect, useState } from "react";
 import logo from "../images/logo.png";
 import Menu1 from "../components/Menu1";
 import { Link } from "react-router-dom";
+import flag from "../images/flag.jpg";
 import {
   addDoc,
   collection,
@@ -153,6 +155,23 @@ const Forum: React.FC = () => {
   return (
     <IonPage>
       <IonHeader class="ion-no-border">
+        <IonToolbar className="Ttoolbar">
+          <IonGrid
+            className="Ttoolbar"
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+            }}
+          >
+            <IonImg src={flag} className="flag" />
+            <IonNote className="note">
+              An Official Website of Cameroon Government{" "}
+              <Link to={"#"}> Here's how you know</Link>{" "}
+            </IonNote>
+          </IonGrid>
+        </IonToolbar>
         <IonToolbar>
           <Link to={"/"} slot="start">
             <IonImg
@@ -210,7 +229,7 @@ const Forum: React.FC = () => {
                 Resources
               </IonButton>
             </IonButtons>
-            <IonButton fill="outline" routerLink="/SignIn">
+            <IonButton fill="outline" routerLink="/SignIn" color={"light"}>
               Singin
             </IonButton>
           </IonGrid>{" "}
@@ -239,6 +258,7 @@ const Forum: React.FC = () => {
             value={selectedCategory}
             onIonChange={(e) => setSelectedCategory(e.detail.value as any)}
             scrollable
+            color={"warning"}
           >
             <IonSegmentButton value="all">
               <IonLabel>All</IonLabel>
@@ -335,7 +355,7 @@ const Forum: React.FC = () => {
         onDidDismiss={() => setShowNewPostModal(false)}
       >
         <IonHeader>
-          <IonToolbar color="primary">
+          <IonToolbar className="Mtoolbar">
             <IonButtons slot="start">
               <IonButton onClick={() => setShowNewPostModal(false)}>
                 <IonIcon slot="icon-only" icon={closeOutline} />

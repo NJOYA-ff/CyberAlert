@@ -36,6 +36,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { auth } from "../firebaseConfig";
 import logo from "../images/logo.png";
+import flag from "../images/flag.jpg";
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -134,6 +135,23 @@ const SignIn: React.FC = () => {
   return (
     <IonPage>
       <IonHeader class="ion-no-border">
+        <IonToolbar className="Ttoolbar">
+          <IonGrid
+            className="Ttoolbar"
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+            }}
+          >
+            <IonImg src={flag} className="flag" />
+            <IonNote className="note">
+              An Official Website of Cameroon Government{" "}
+              <Link to={"#"}> Here's how you know</Link>{" "}
+            </IonNote>
+          </IonGrid>
+        </IonToolbar>
         <IonToolbar>
           <Link to={"/"} slot="start">
             {" "}
@@ -192,7 +210,7 @@ const SignIn: React.FC = () => {
                 Resources
               </IonButton>
             </IonButtons>
-            <IonButton fill="outline" routerLink="/SignIn">
+            <IonButton fill="outline" routerLink="/SignIn" color={"light"}>
               Singin
             </IonButton>
           </IonGrid>{" "}

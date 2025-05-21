@@ -14,8 +14,10 @@ import {
   IonImg,
   IonItem,
   IonLabel,
+  IonList,
   IonMenu,
   IonMenuButton,
+  IonNote,
   IonPage,
   IonRow,
   IonSearchbar,
@@ -36,11 +38,16 @@ import {
   logoInstagram,
   logoLinkedin,
   logoYoutube,
+  callOutline,
+  locationOutline,
+  logoTwitter,
+  mailOutline,
 } from "ionicons/icons";
 import React, { useState } from "react";
 import logo from "../images/logo.png";
 import Menu1 from "../components/Menu1";
 import { Link } from "react-router-dom";
+import flag from "../images/flag.jpg";
 interface ResourceItem {
   id: string;
   title: string;
@@ -53,7 +60,7 @@ interface ResourceItem {
 }
 const Resources: React.FC = () => {
   const [searchText, setSearchText] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   // Sample data matching cyberalert's resource categories
   const resources: ResourceItem[] = [
@@ -89,14 +96,14 @@ const Resources: React.FC = () => {
     },
   ];
 
-  const categories = ["all", ...new Set(resources.map((r) => r.category))];
+  const categories = ["All", ...new Set(resources.map((r) => r.category))];
 
   const filteredResources = resources.filter((resource) => {
     const matchesSearch =
       resource.title.toLowerCase().includes(searchText.toLowerCase()) ||
       resource.description.toLowerCase().includes(searchText.toLowerCase());
     const matchesCategory =
-      selectedCategory === "all" || resource.category === selectedCategory;
+      selectedCategory === "All" || resource.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -134,6 +141,23 @@ const Resources: React.FC = () => {
     <IonPage>
       {" "}
       <IonHeader class="ion-no-border">
+        <IonToolbar className="Ttoolbar">
+          <IonGrid
+            className="Ttoolbar"
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+            }}
+          >
+            <IonImg src={flag} className="flag" />
+            <IonNote className="note">
+              An Official Website of Cameroon Government{" "}
+              <Link to={"#"}> Here's how you know</Link>{" "}
+            </IonNote>
+          </IonGrid>
+        </IonToolbar>
         <IonToolbar>
           <Link to={"/"} slot="start">
             {" "}
@@ -192,7 +216,7 @@ const Resources: React.FC = () => {
                 Resources
               </IonButton>
             </IonButtons>
-            <IonButton fill="outline" routerLink="/SignIn">
+            <IonButton fill="outline" routerLink="/SignIn" color={"light"}>
               Singin
             </IonButton>
           </IonGrid>{" "}
@@ -217,6 +241,7 @@ const Resources: React.FC = () => {
             value={selectedCategory}
             onIonChange={(e) => setSelectedCategory(e.detail.value as string)}
             scrollable
+            color={"warning"}
           >
             {categories.map((category) => (
               <IonSegmentButton key={category} value={category}>
@@ -288,61 +313,112 @@ const Resources: React.FC = () => {
           ))
         )}
 
-        <IonFooter style={{ bottom: "0", marginTop: "30em" }}>
-          <IonToolbar>
+        <IonFooter className="cyber-footer" translucent={false}>
+          <IonToolbar className="footer-toolbar">
             <IonGrid>
+              {/* Main footer content */}
               <IonRow>
-                <IonCol>
-                  <strong>CyberAlert</strong>
-                  <br />
-                  <a href="/">Home Page</a>
-                  <br />
-                  <a href="#">Privacy Policy</a>
-                  <br />
-                  <a href="#">About CyberAlert</a>
+                {/* Quick Links */}
+                <IonCol size="12" sizeMd="3">
+                  <IonTitle className="footer-title">Liens Rapides</IonTitle>
+                  <IonList lines="none" className="footer-list">
+                    <IonItem routerLink="/alerts" className="footer-item">
+                      <IonLabel>Alerts</IonLabel>
+                    </IonItem>
+                    <IonItem routerLink="/report" className="footer-item">
+                      <IonLabel>Report</IonLabel>
+                    </IonItem>
+                    <IonItem routerLink="/resources" className="footer-item">
+                      <IonLabel>Ressources</IonLabel>
+                    </IonItem>
+                    <IonItem routerLink="/about" className="footer-item">
+                      <IonLabel>About</IonLabel>
+                    </IonItem>
+                  </IonList>
                 </IonCol>
-                <IonCol>
-                  <strong>Cameroon Police</strong>
-                  <br />
-                  <a href="#">Home Page</a>
-                  <br />
-                  <a href="#">Privacy Policy</a>
-                  <br />
-                  <a href="#">About Cameroon</a>
+
+                {/* Contact Info */}
+                <IonCol size="12" sizeMd="4">
+                  <IonTitle className="footer-title">Contact Us</IonTitle>
+                  <IonList lines="none" className="footer-list">
+                    <IonItem className="footer-item">
+                      <IonIcon
+                        icon={locationOutline}
+                        slot="start"
+                        color="light"
+                      />
+                      <IonLabel>MINPOSTEL, Yaoundé, Cameroun</IonLabel>
+                    </IonItem>
+                    <IonItem className="footer-item">
+                      <IonIcon icon={callOutline} slot="start" color="light" />
+                      <IonLabel>(+237) 222 22 22 22</IonLabel>
+                    </IonItem>
+                    <IonItem className="footer-item">
+                      <IonIcon icon={mailOutline} slot="start" color="light" />
+                      <IonLabel>contact@cyberalert.cm</IonLabel>
+                    </IonItem>
+                  </IonList>
                 </IonCol>
-                <IonCol>
-                  <strong>ANTIC</strong>
-                  <br />
-                  <a href="#">Home Page</a>
-                  <br />
-                  <a href="#">Privacy Policy</a>
-                  <br />
-                  <a href="#">About ANTIC</a>
+
+                {/* Social Media */}
+                <IonCol size="12" sizeMd="3">
+                  <IonTitle className="footer-title">Follow Us</IonTitle>
+                  <IonList lines="none" className="footer-list social-list">
+                    <IonItem
+                      href="https://facebook.com/cyberalertcm"
+                      target="_blank"
+                      className="footer-item"
+                    >
+                      <IonIcon icon={logoFacebook} slot="start" color="light" />
+                      <IonLabel>Facebook</IonLabel>
+                    </IonItem>
+                    <IonItem
+                      href="https://twitter.com/cyberalertcm"
+                      target="_blank"
+                      className="footer-item"
+                    >
+                      <IonIcon icon={logoTwitter} slot="start" color="light" />
+                      <IonLabel>Twitter</IonLabel>
+                    </IonItem>
+                    <IonItem
+                      href="https://linkedin.com/company/cyberalertcm"
+                      target="_blank"
+                      className="footer-item"
+                    >
+                      <IonIcon icon={logoLinkedin} slot="start" color="light" />
+                      <IonLabel>LinkedIn</IonLabel>
+                    </IonItem>
+                  </IonList>
                 </IonCol>
-                <IonCol>
-                  <strong>Contact the Press Office</strong>
-                  <br />
-                  (+237) 119
-                  <br />
-                  <a href="#">Accessibility Statement</a>
-                  <br />
-                  <a href="#">Questions? See the CyberAlert FAQ</a>
+
+                {/* Emergency Contact */}
+                <IonCol size="12" sizeMd="2">
+                  <div className="emergency-box">
+                    <IonTitle className="emergency-title">Emergency</IonTitle>
+                    <div className="emergency-number">117</div>
+                    <p className="emergency-text">
+                      Cyber alert emergency number
+                    </p>
+                  </div>
                 </IonCol>
               </IonRow>
-            </IonGrid>
-          </IonToolbar>{" "}
-          <IonToolbar
-            class="ion-no-border"
-            color={"secondary"}
-            style={{ paddingLeft: "20%", paddingRight: "20%" }}
-          >
-            <IonGrid style={{ gap: "10px", fontSize: "22px", display: "flex" }}>
-              {" "}
-              <IonIcon icon={logoYoutube} />
-              <IonIcon icon={logoFacebook} />
-              <IonIcon icon={logoLinkedin} />
-              <IonIcon icon={logoInstagram} />
-              <IonIcon icon={logoFlickr} />
+
+              {/* Copyright and bottom bar */}
+              <IonRow>
+                <IonCol size="12">
+                  <div className="footer-bottom">
+                    <p>
+                      © {new Date().getFullYear()} Cyber Alert center Cameroun.
+                      All rights reserved.
+                    </p>
+                    <div className="footer-links">
+                      <a href="/privacy">Confidentiality</a>
+                      <a href="/accessibility">Accessibility</a>
+                      <a href="/disclaimer">Warning</a>
+                    </div>
+                  </div>
+                </IonCol>
+              </IonRow>
             </IonGrid>
           </IonToolbar>
         </IonFooter>
